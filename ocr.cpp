@@ -10,21 +10,32 @@ int main() {
     int width = 350;
     int height = 160;
 
-    std::vector<uint8_t> gray(width * height);
-    std::ifstream file("image1.gray", std::ios::binary);
+    std::vector<uint8_t> bgra(width * height * 4);
 
-    file.read(reinterpret_cast<char *>(gray.data()), width * height);
+    std::ifstream file("image3.bgra", std::ios::binary);
+    file.read(reinterpret_cast<char *>(bgra.data()), width * height * 4);
+
+    std::vector<uint8_t> gray(width * height);
+
+    for (size_t i = 0; i < gray.size(); ++i) {
+        size_t bgraIdx = 4 * i;
+        gray[i] = (77 * bgra[bgraIdx + 2] + 150 * bgra[bgraIdx + 1] + 29 * bgra[bgraIdx]) / 256;
+        // gray[i] = bgra[bgraIdx + 1];
+    }
+
+    // std::ifstream file("image1.gray", std::ios::binary);
+    // file.read(reinterpret_cast<char *>(gray.data()), width * height);
 
     // Print a grayscale image of the vector using ansi color codes and spaces
-    // for (size_t i = 0; i < gray.size(); i += 3) {
-    //     if ((i / width) % 3 != 0)
-    //         continue;
-    //     if (i != 0 && i % width == 0)
-    //         std::cout << "\033[0m\n";
-    //     int value = static_cast<int>(gray[i]);
-    //     std::cout << "\033[48;2;" << value << ";" << value << ";" << value << "m ";
-    // }
-    // std::cout << "\033[0m\n";
+    for (size_t i = 0; i < gray.size(); i += 3) {
+        if ((i / width) % 3 != 0)
+            continue;
+        if (i != 0 && i % width == 0)
+            std::cout << "\033[0m\n";
+        int value = static_cast<int>(gray[i]);
+        std::cout << "\033[48;2;" << value << ";" << value << ";" << value << "m ";
+    }
+    std::cout << "\033[0m\n";
 
     std::unique_ptr<tesseract::TessBaseAPI> api = std::make_unique<tesseract::TessBaseAPI>();
     if (api->Init(NULL, "eng")) {

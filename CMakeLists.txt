@@ -14,4 +14,4 @@ endif()
 add_executable(resize resize.cpp)
 
 add_executable(ocr ocr.cpp)
-target_link_libraries(ocr PRIVATE tesseract leptonica)
+target_link_libraries(ocr PRIVATE tesseract)
