@@ -15,3 +15,5 @@ add_executable(resize resize.cpp)
 
 add_executable(ocr ocr.cpp)
 target_link_libraries(ocr PRIVATE tesseract)
+
+add_executable(textDataBuilder textDataBuilder.cpp)
