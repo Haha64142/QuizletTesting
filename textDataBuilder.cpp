@@ -1,41 +1,19 @@
+#include <cctype>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <unordered_map>
 
-/**
- * Gets the first `idealWords` amount of words from `inText`
- *
- * Words are anything a-z or A-Z
- * It only includes the first non-space character after each word (punctuation counts as a space)
- * The first and last characters are always letters in non-empty strings
- */
-std::string getFirstWords(const std::string &inText, int idealWords = 3) {
+std::string getData(const std::string &inText, int length) {
     std::string outText;
-    int words = 0;
-    bool inWord = false;
 
     for (const char &c : inText) {
-        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
-            inWord = true;
-            outText += c;
-        } else if (inWord) {
-            inWord = false;
-            if ((++words) == idealWords)
-                break;
-            outText += c;
+        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')) {
+            outText += std::tolower(static_cast<unsigned char>(c));
         }
     }
 
-    if (outText.empty())
-        return "";
-
-    char c = outText.back();
-    if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))) {
-        outText.pop_back();
-    }
-
-    return outText;
+    return outText.substr(0, length);
 }
 
 int main(int argc, char *argv[]) {
@@ -55,7 +33,7 @@ int main(int argc, char *argv[]) {
 
     if (inFile.is_open() && outFile.is_open()) {
         for (size_t i = 0; std::getline(inFile, line); ++i) {
-            line = getFirstWords(line, 9);
+            line = getData(line, 33);
             auto it = textData.find(line);
             if (it != textData.end()) {
                 std::cerr << "Duplicate values: '" << line << "' at line " << it->second + 1
